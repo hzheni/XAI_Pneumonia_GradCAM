@@ -156,7 +156,8 @@ def show_gradcam(idx):
     plt.tight_layout()
 
     # save images
-    plt.savefig(f"gradcam_{idx}_{correct}.png")
+    folder = "outputs/correct" if correct == "Correct" else "outputs/incorrect"
+    plt.savefig(f"{folder}/gradcam_{idx}.png")
     plt.close()
 
 # find examples by class
