@@ -143,7 +143,7 @@ def show_gradcam(idx):
     # original
     plt.subplot(1, 3, 1)
     plt.imshow(img)
-    plt.title(f"Original\nTrue: {class_names[label]}")
+    plt.title(f"\nOriginal\nTrue: {class_names[label]}")
     plt.axis("off")
 
     # heatmap
@@ -155,14 +155,14 @@ def show_gradcam(idx):
     # overlay
     plt.subplot(1, 3, 3)
     plt.imshow(overlay.astype(np.uint8))
-    plt.title(f"Pred: {class_names[pred]} ({correct})\nConf: {confidence:.2f}")
+    plt.title(f"\nPred: {class_names[pred]} ({correct})\nConf: {confidence:.2f}")
     plt.axis("off")
 
     plt.tight_layout()
 
     # save images
     folder = "outputs/correct" if correct == "Correct" else "outputs/incorrect"
-    plt.savefig(f"{folder}/gradcam_{idx}.png")
+    plt.savefig(f"{folder}/{class_names[label]}_gradcam_{idx}.png")
     plt.close()
 
 # find examples by class
