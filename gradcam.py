@@ -99,7 +99,7 @@ class GradCAM:
 
         return cam.cpu().detach().numpy()
 
-# helper functions
+# visualization
 def show_gradcam(idx):
     """
     shows original image, heatmap, and overlay
@@ -115,51 +115,79 @@ def show_gradcam(idx):
     output = model(input_tensor)
     pred = torch.argmax(output, dim=1).item()
 
+    confidence = torch.softmax(output, dim=1)[0][pred].item()
+
+    print(f"True: {class_names[label]}, Pred: {class_names[pred]}, Confidence: {confidence:.3f}")
+
     # generate gradcam
     cam = gradcam.generate_cam(input_tensor, pred)
 
-    # convert image for plotting
     img = display_img.permute(1, 2, 0).numpy()
 
-    # resize cam
     cam = cv2.resize(cam, (224, 224))
 
-    # heatmap
     heatmap = np.uint8(255 * cam)
     heatmap = cv2.applyColorMap(heatmap, cv2.COLORMAP_JET)
 
-    # overlay
     overlay = heatmap * 0.4 + np.uint8(img * 255)
 
-    # plot everything
-    plt.figure(figsize=(12,4))
+    correct = "Correct" if pred == label else "Incorrect"
+
+    plt.figure(figsize=(12, 4))
 
     # original
-    plt.subplot(1,3,1)
+    plt.subplot(1, 3, 1)
     plt.imshow(img)
     plt.title(f"Original\nTrue: {class_names[label]}")
     plt.axis("off")
 
     # heatmap
-    plt.subplot(1,3,2)
+    plt.subplot(1, 3, 2)
     plt.imshow(heatmap)
     plt.title("Grad-CAM Heatmap")
     plt.axis("off")
 
     # overlay
-    plt.subplot(1,3,3)
+    plt.subplot(1, 3, 3)
     plt.imshow(overlay.astype(np.uint8))
-    plt.title(f"Pred: {class_names[pred]}")
+    plt.title(f"Pred: {class_names[pred]} ({correct})\nConf: {confidence:.2f}")
     plt.axis("off")
 
-    plt.show()
+    plt.tight_layout()
+
+    # save images
+    plt.savefig(f"gradcam_{idx}_{correct}.png")
+    plt.close()
+
+# find examples by class
+def find_class_examples(target_class, num_samples=5):
+    indices = []
+
+    class_idx = class_names.index(target_class)
+
+    for i in range(len(test_data)):
+        _, label = test_data[i]
+
+        if label == class_idx:
+            indices.append(i)
+
+        if len(indices) >= num_samples:
+            break
+
+    return indices
 
 # initialize gradcam
-# choose last conv layer in ResNet18
 target_layer = model.layer4[-1].conv2
-
 gradcam = GradCAM(model, target_layer)
 
-# run multiple examples
-for i in range(5):
-    show_gradcam(i)
+# run analysis
+normal_idxs = find_class_examples("NORMAL", 5)
+pneumonia_idxs = find_class_examples("PNEUMONIA", 5)
+
+print("\nNORMAL CASES:")
+for idx in normal_idxs:
+    show_gradcam(idx)
+
+print("\nPNEUMONIA CASES:")
+for idx in pneumonia_idxs:
+    show_gradcam(idx)
