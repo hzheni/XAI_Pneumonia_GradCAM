@@ -117,12 +117,13 @@ def evaluate_and_collect():
         output = model(input_tensor)
         pred = torch.argmax(output, dim=1).item()
 
-        if pred == label:
+        if pred == label and len(correct) < 10:
             correct.append(i)
-        else:
+
+        elif pred != label and len(incorrect) < 10:
             incorrect.append(i)
 
-        if len(correct) >= 10 and len(incorrect) >= 10:
+        if len(correct) == 10 and len(incorrect) == 10:
             break
 
     return correct, incorrect
