@@ -103,33 +103,42 @@ class GradCAM:
 
         return cam.cpu().detach().numpy()
 
-# prediction tracking
-# collecting 10 correctly and 10 incorrectly predicted cases for further gradcam analysis
+# collect cases for prediction tracking for further gradcam analysis
+# collecting 10 correctly predicted cases (5 NORMAL 5 PNEUMONIA)
+# and collecting 10 incorrectly predicted cases (5 NORMAL 5 PNEUMONIA)
 
-def evaluate_and_collect():
-    correct = []
-    incorrect = []
+def collect_cases():
+    correct_normal = []
+    correct_pneumonia = []
+    incorrect_normal = []
+    incorrect_pneumonia = []
 
     for i in range(len(test_data)):
-        input_img, label = test_data[i]
-        input_tensor = input_img.unsqueeze(0).to(device)
+        img, label = test_data[i]
+        x = img.unsqueeze(0).to(device)
 
-        output = model(input_tensor)
-        pred = torch.argmax(output, dim=1).item()
+        out = model(x)
+        pred = torch.argmax(out, dim=1).item()
 
-        if pred == label and len(correct) < 10:
-            correct.append(i)
+        if pred == label:
+            if label == 0 and len(correct_normal) < 5:
+                correct_normal.append(i)
+            elif label == 1 and len(correct_pneumonia) < 5:
+                correct_pneumonia.append(i)
+        else:
+            if label == 0 and len(incorrect_normal) < 5:
+                incorrect_normal.append(i)
+            elif label == 1 and len(incorrect_pneumonia) < 5:
+                incorrect_pneumonia.append(i)
 
-        elif pred != label and len(incorrect) < 10:
-            incorrect.append(i)
-
-        if len(correct) == 10 and len(incorrect) == 10:
+        if (len(correct_normal) == 5 and len(correct_pneumonia) == 5 and
+            len(incorrect_normal) == 5 and len(incorrect_pneumonia) == 5):
             break
 
-    return correct, incorrect
+    return correct_normal, correct_pneumonia, incorrect_normal, incorrect_pneumonia
 
 # visualization
-def show_gradcam(idx, category):
+def show_gradcam(idx, category, label_type):
     input_img, label = test_data[idx]
     display_img, _ = display_data[idx]
 
@@ -180,7 +189,7 @@ def show_gradcam(idx, category):
 
     # save images
     folder = f"outputs/{category}"
-    plt.savefig(f"{folder}/gradcam_{idx}.png")
+    plt.savefig(f"{folder}/{label_type}_gradcam_{idx}.png")
     plt.close()
 
 # initialize gradcam
@@ -188,15 +197,23 @@ target_layer = model.layer4[-1].conv2
 gradcam = GradCAM(model, target_layer)
 
 # run analysis
-correct_idxs, incorrect_idxs = evaluate_and_collect()
+cn, cp, in_, ip = collect_cases()
 
-print("\nCorrect Predictions:")
-for idx in correct_idxs:
-    show_gradcam(idx, "correct")
+print("\nCorrect NORMAL:")
+for idx in cn:
+    show_gradcam(idx, "correct", "NORMAL")
 
-print("\nIncorrect Predictions:")
-for idx in incorrect_idxs:
-    show_gradcam(idx, "incorrect")
+print("\nCorrect PNEUMONIA:")
+for idx in cp:
+    show_gradcam(idx, "correct", "PNEUMONIA")
+
+print("\nIncorrect NORMAL:")
+for idx in in_:
+    show_gradcam(idx, "incorrect", "NORMAL")
+
+print("\nIncorrect PNEUMONIA:")
+for idx in ip:
+    show_gradcam(idx, "incorrect", "PNEUMONIA")
 
 # full test set accuracy evaluation
 def evaluate_model():
