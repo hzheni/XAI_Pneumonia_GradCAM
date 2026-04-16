@@ -1,4 +1,4 @@
-# Pneumonia Detection Model - Grad-CAM Analysis
+# Grad-CAM Analysis
 
 ## Overview
 
