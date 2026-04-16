@@ -125,14 +125,18 @@ def collect_cases():
                 correct_normal.append(i)
             elif label == 1 and len(correct_pneumonia) < 5:
                 correct_pneumonia.append(i)
+
         else:
             if label == 0 and len(incorrect_normal) < 5:
                 incorrect_normal.append(i)
             elif label == 1 and len(incorrect_pneumonia) < 5:
                 incorrect_pneumonia.append(i)
 
-        if (len(correct_normal) == 5 and len(correct_pneumonia) == 5 and
-            len(incorrect_normal) == 5 and len(incorrect_pneumonia) == 5):
+        # only stop when all are filled
+        if (len(correct_normal) == 5 and
+            len(correct_pneumonia) == 5 and
+            len(incorrect_normal) == 5 and
+            len(incorrect_pneumonia) == 5):
             break
 
     return correct_normal, correct_pneumonia, incorrect_normal, incorrect_pneumonia
