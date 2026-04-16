@@ -9,28 +9,35 @@ Evaluation includes:
 
 ---
 
-## NORMAL CASES
+## CORRECT CASES
 
-- True: NORMAL, Pred: NORMAL, Confidence: 0.951  
-- True: NORMAL, Pred: NORMAL, Confidence: 0.995  
-- True: NORMAL, Pred: NORMAL, Confidence: 0.984  
-- True: NORMAL, Pred: NORMAL, Confidence: 0.748  
-- True: NORMAL, Pred: NORMAL, Confidence: 0.965
-- True: NORMAL, Pred: NORMAL, Confidence: 0.996
-- True: NORMAL, Pred: NORMAL, Confidence: 0.962
-- True: NORMAL, Pred: NORMAL, Confidence: 0.675
-- True: NORMAL, Pred: NORMAL, Confidence: 0.919
-- True: NORMAL, Pred: NORMAL, Confidence: 0.992
+- Idx: 0, True: NORMAL, Prediction: NORMAL, Confidence: 0.951
+- Idx: 1, True: NORMAL, Prediction: NORMAL, Confidence: 0.995
+- Idx: 2, True: NORMAL, Prediction: NORMAL, Confidence: 0.984
+- Idx: 3, True: NORMAL, Prediction: NORMAL, Confidence: 0.748
+- Idx: 4, True: NORMAL, Prediction: NORMAL, Confidence: 0.965
+
+- Idx: 234, True: PNEUMONIA, Prediction: PNEUMONIA, Confidence: 0.994
+- Idx: 235, True: PNEUMONIA, Prediction: PNEUMONIA, Confidence: 0.997
+- Idx: 236, True: PNEUMONIA, Prediction: PNEUMONIA, Confidence: 1.000
+- Idx: 237, True: PNEUMONIA, Prediction: PNEUMONIA, Confidence: 0.999
+- Idx: 238, True: PNEUMONIA, Prediction: PNEUMONIA, Confidence: 0.999
 
 ---
 
-## PNEUMONIA CASES
+## INCORRECT CASES
 
-- True: NORMAL, Pred: PNEUMONIA, Confidence: 0.994  
-- True: NORMAL, Pred: PNEUMONIA, Confidence: 0.997  
-- True: NORMAL, Pred: PNEUMONIA, Confidence: 1.000  
-- True: NORMAL, Pred: PNEUMONIA, Confidence: 0.999  
-- True: NORMAL, Pred: PNEUMONIA, Confidence: 0.999  
+- Idx: 8, True: NORMAL, Prediction: PNEUMONIA, Confidence: 0.779
+- Idx: 10, True: NORMAL, Prediction: PNEUMONIA, Confidence: 0.565
+- Idx: 11, True: NORMAL, Prediction: PNEUMONIA, Confidence: 0.861
+- Idx: 14, True: NORMAL, Prediction: PNEUMONIA, Confidence: 0.992
+- Idx: 16, True: NORMAL, Prediction: PNEUMONIA, Confidence: 0.993
+
+- Idx: 391, True: PNEUMONIA, Prediction: NORMAL, Confidence: 0.848
+- Idx: 473, True: PNEUMONIA, Prediction: NORMAL, Confidence: 0.606
+- Idx: 496, True: PNEUMONIA, Prediction: NORMAL, Confidence: 0.696
+- Idx: 599, True: PNEUMONIA, Prediction: NORMAL, Confidence: 0.639
+- (only 4 cases where a PNEUMONIA patient was predicted as NORMAL)
 
 ---
 
