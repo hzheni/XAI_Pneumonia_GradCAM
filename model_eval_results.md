@@ -1,9 +1,9 @@
-# Pneumonia Detection Model - Evaluation Results
+# Pneumonia Detection Model - Grad-CAM Analysis
 
 ## Overview
 
 Evaluation includes:
-- Sample predictions for both classes, NORMAL and PNEUMONIA
+- Samples for both correct and incorrect predictions
 - Confidence scores
 - Full test set accuracy
 
@@ -15,17 +15,22 @@ Evaluation includes:
 - True: NORMAL, Pred: NORMAL, Confidence: 0.995  
 - True: NORMAL, Pred: NORMAL, Confidence: 0.984  
 - True: NORMAL, Pred: NORMAL, Confidence: 0.748  
-- True: NORMAL, Pred: NORMAL, Confidence: 0.965  
+- True: NORMAL, Pred: NORMAL, Confidence: 0.965
+- True: NORMAL, Pred: NORMAL, Confidence: 0.996
+- True: NORMAL, Pred: NORMAL, Confidence: 0.962
+- True: NORMAL, Pred: NORMAL, Confidence: 0.675
+- True: NORMAL, Pred: NORMAL, Confidence: 0.919
+- True: NORMAL, Pred: NORMAL, Confidence: 0.992
 
 ---
 
 ## PNEUMONIA CASES
 
-- True: PNEUMONIA, Pred: PNEUMONIA, Confidence: 0.994  
-- True: PNEUMONIA, Pred: PNEUMONIA, Confidence: 0.997  
-- True: PNEUMONIA, Pred: PNEUMONIA, Confidence: 1.000  
-- True: PNEUMONIA, Pred: PNEUMONIA, Confidence: 0.999  
-- True: PNEUMONIA, Pred: PNEUMONIA, Confidence: 0.999  
+- True: NORMAL, Pred: PNEUMONIA, Confidence: 0.994  
+- True: NORMAL, Pred: PNEUMONIA, Confidence: 0.997  
+- True: NORMAL, Pred: PNEUMONIA, Confidence: 1.000  
+- True: NORMAL, Pred: PNEUMONIA, Confidence: 0.999  
+- True: NORMAL, Pred: PNEUMONIA, Confidence: 0.999  
 
 ---
 
