@@ -1,13 +1,9 @@
 # Pneumonia Detection Model - Evaluation Results
 
 ## Overview
-This document summarizes the performance of a ResNet18-based model trained to classify chest X-ray images into two categories:
-
-- NORMAL
-- PNEUMONIA
 
 Evaluation includes:
-- Sample predictions for both classes
+- Sample predictions for both classes, NORMAL and PNEUMONIA
 - Confidence scores
 - Full test set accuracy
 
@@ -44,21 +40,3 @@ Evaluation includes:
 ## Final Performance
 
 Test Accuracy: 0.8862 (88.62%)
-
----
-
-## Notes
-
-- The model performs well on both classes.
-- Predictions show consistently high confidence.
-- Grad-CAM was used separately to visualize model focus areas on chest X-rays.
-- Misclassified cases should be further analyzed using Grad-CAM outputs.
-
----
-
-## Files in this project
-
-- gradcam.py: Grad-CAM implementation and inference
-- best_model.pth: trained ResNet18 model weights
-- outputs/: Grad-CAM visualizations
-- results.md: evaluation summary
