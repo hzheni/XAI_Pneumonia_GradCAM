@@ -10,6 +10,11 @@ import cv2 # to use for heatmap overlay
 from torchvision import datasets, transforms, models
 from torch.utils.data import DataLoader
 
+import os
+
+os.makedirs("outputs/correct", exist_ok=True)
+os.makedirs("outputs/incorrect", exist_ok=True)
+
 # same transforms as training
 transform = transforms.Compose([
     transforms.Resize((224, 224)),
