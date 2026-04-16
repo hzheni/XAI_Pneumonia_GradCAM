@@ -1,4 +1,4 @@
-#gradcam implementation file
+# gradcam implementation file
 
 # imports
 import torch
@@ -11,7 +11,6 @@ from torchvision import datasets, transforms, models
 from torch.utils.data import DataLoader
 
 import os
-
 os.makedirs("outputs/correct", exist_ok=True)
 os.makedirs("outputs/incorrect", exist_ok=True)
 
@@ -104,13 +103,32 @@ class GradCAM:
 
         return cam.cpu().detach().numpy()
 
-# visualization
-def show_gradcam(idx):
-    """
-    shows original image, heatmap, and overlay
-    """
+# prediction tracking
+# collecting 10 correctly and 10 incorrectly predicted cases for further gradcam analysis
 
-    # get image
+def evaluate_and_collect():
+    correct = []
+    incorrect = []
+
+    for i in range(len(test_data)):
+        input_img, label = test_data[i]
+        input_tensor = input_img.unsqueeze(0).to(device)
+
+        output = model(input_tensor)
+        pred = torch.argmax(output, dim=1).item()
+
+        if pred == label:
+            correct.append(i)
+        else:
+            incorrect.append(i)
+
+        if len(correct) >= 10 and len(incorrect) >= 10:
+            break
+
+    return correct, incorrect
+
+# visualization
+def show_gradcam(idx, category):
     input_img, label = test_data[idx]
     display_img, _ = display_data[idx]
 
@@ -122,13 +140,10 @@ def show_gradcam(idx):
 
     confidence = torch.softmax(output, dim=1)[0][pred].item()
 
-    print(f"True: {class_names[label]}, Pred: {class_names[pred]}, Confidence: {confidence:.3f}")
-
     # generate gradcam
     cam = gradcam.generate_cam(input_tensor, pred)
 
     img = display_img.permute(1, 2, 0).numpy()
-
     cam = cv2.resize(cam, (224, 224))
 
     heatmap = np.uint8(255 * cam)
@@ -137,6 +152,8 @@ def show_gradcam(idx):
     overlay = heatmap * 0.4 + np.uint8(img * 255)
 
     correct = "Correct" if pred == label else "Incorrect"
+
+    print(f"Idx: {idx}, True: {class_names[label]}, Pred: {class_names[pred]}, Conf: {confidence:.3f}")
 
     plt.figure(figsize=(12, 4))
 
@@ -161,58 +178,43 @@ def show_gradcam(idx):
     plt.tight_layout()
 
     # save images
-    folder = "outputs/correct" if correct == "Correct" else "outputs/incorrect"
-    plt.savefig(f"{folder}/{class_names[label]}_gradcam_{idx}.png")
+    folder = f"outputs/{category}"
+    plt.savefig(f"{folder}/gradcam_{idx}.png")
     plt.close()
-
-# find examples by class
-def find_class_examples(target_class, num_samples=5):
-    indices = []
-
-    class_idx = class_names.index(target_class)
-
-    for i in range(len(test_data)):
-        _, label = test_data[i]
-
-        if label == class_idx:
-            indices.append(i)
-
-        if len(indices) >= num_samples:
-            break
-
-    return indices
 
 # initialize gradcam
 target_layer = model.layer4[-1].conv2
 gradcam = GradCAM(model, target_layer)
 
 # run analysis
-normal_idxs = find_class_examples("NORMAL", 5)
-pneumonia_idxs = find_class_examples("PNEUMONIA", 5)
+correct_idxs, incorrect_idxs = evaluate_and_collect()
 
-print("\nNORMAL CASES:")
-for idx in normal_idxs:
-    show_gradcam(idx)
+print("\nCorrect Predictions:")
+for idx in correct_idxs:
+    show_gradcam(idx, "correct")
 
-print("\nPNEUMONIA CASES:")
-for idx in pneumonia_idxs:
-    show_gradcam(idx)
+print("\nIncorrect Predictions:")
+for idx in incorrect_idxs:
+    show_gradcam(idx, "incorrect")
 
 # full test set accuracy evaluation
 def evaluate_model():
     correct = 0
     total = 0
 
-    for i in range(len(test_data)):
-        input_img, label = test_data[i]
-        input_tensor = input_img.unsqueeze(0).to(device)
+    model.eval()
 
-        output = model(input_tensor)
-        pred = torch.argmax(output, dim=1).item()
+    with torch.no_grad():
+        for i in range(len(test_data)):
+            input_img, label = test_data[i]
+            input_tensor = input_img.unsqueeze(0).to(device)
 
-        if pred == label:
-            correct += 1
-        total += 1
+            output = model(input_tensor)
+            pred = torch.argmax(output, dim=1).item()
+
+            if pred == label:
+                correct += 1
+            total += 1
 
     print("\nCorrect Predictions:", correct)
     print("Wrong Predictions:", total - correct)
