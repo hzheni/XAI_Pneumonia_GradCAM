@@ -191,3 +191,26 @@ for idx in normal_idxs:
 print("\nPNEUMONIA CASES:")
 for idx in pneumonia_idxs:
     show_gradcam(idx)
+
+# full test set accuracy evaluation
+def evaluate_model():
+    correct = 0
+    total = 0
+
+    for i in range(len(test_data)):
+        input_img, label = test_data[i]
+        input_tensor = input_img.unsqueeze(0).to(device)
+
+        output = model(input_tensor)
+        pred = torch.argmax(output, dim=1).item()
+
+        if pred == label:
+            correct += 1
+        total += 1
+
+    print("\nCorrect Predictions:", correct)
+    print("Wrong Predictions:", total - correct)
+    print("Total Predictions:", total)
+    print("\nTest Accuracy:", correct / total)
+
+evaluate_model()
